@@ -14,9 +14,13 @@ import StatDetail from "./StatDetail";
 
 import Home from "./Home";
 
+import Login from "./Login";
+
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 
 const PAGES = {
+    
+    Login: Login,
     
     Onboarding: Onboarding,
     
@@ -44,7 +48,7 @@ function _getCurrentPage(url) {
     }
 
     const pageName = Object.keys(PAGES).find(page => page.toLowerCase() === urlLastPart.toLowerCase());
-    return pageName || Object.keys(PAGES)[0];
+    return pageName || 'Login'; // Default to Login instead of first page
 }
 
 // Create a wrapper component that uses useLocation inside the Router context
@@ -56,8 +60,10 @@ function PagesContent() {
         <Layout currentPageName={currentPage}>
             <Routes>            
                 
-                    <Route path="/" element={<Onboarding />} />
+                    <Route path="/" element={<Login />} />
                 
+                
+                <Route path="/Login" element={<Login />} />
                 
                 <Route path="/Onboarding" element={<Onboarding />} />
                 

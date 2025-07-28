@@ -19,6 +19,7 @@ export default function Layout({ children, currentPageName }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const {
     showPopup: showCoffeePopup,
@@ -30,13 +31,27 @@ export default function Layout({ children, currentPageName }) {
 
   const checkUser = useCallback(async () => {
     try {
+      // For Login page, don't check authentication
+      if (currentPageName === "Login") {
+        setLoading(false);
+        setIsAuthenticated(false);
+        return;
+      }
+
       const currentUser = await User.me();
+      setIsAuthenticated(true);
+      
+      // If user hasn't completed onboarding and not on onboarding page, redirect
       if (!currentUser.onboarding_completed && currentPageName !== "Onboarding") {
         navigate(createPageUrl("Onboarding"));
       }
     } catch (error) {
-      console.error('User not authenticated:', error);
-      // Handle authentication error if needed
+      console.error('Authentication check failed:', error);
+      setIsAuthenticated(false);
+      // Only redirect to login if not already on login page
+      if (currentPageName !== "Login") {
+        navigate(createPageUrl("Login"));
+      }
     } finally {
       setLoading(false);
     }
@@ -50,8 +65,14 @@ export default function Layout({ children, currentPageName }) {
     return <LoadingSpinner fullScreen text="Loading your journey..." />;
   }
 
-  if (currentPageName === "Onboarding") {
+  // Don't show navigation for Login and Onboarding pages
+  if (currentPageName === "Login" || currentPageName === "Onboarding") {
     return <main className="min-h-screen bg-gray-50">{children}</main>;
+  }
+
+  // If not authenticated and not on login page, show nothing (will redirect)
+  if (!isAuthenticated && currentPageName !== "Login") {
+    return <LoadingSpinner fullScreen text="Redirecting to login..." />;
   }
 
   return (
