@@ -1,19 +1,8 @@
-import { base44 } from './base44Client';
+// Import mock implementations instead of Base44 SDK
+import { Core, InvokeLLM, SendEmail, UploadFile, GenerateImage, ExtractDataFromUploadedFile } from './mockIntegrations';
 
-
-
-
-export const Core = base44.integrations.Core;
-
-export const InvokeLLM = base44.integrations.Core.InvokeLLM;
-
-export const SendEmail = base44.integrations.Core.SendEmail;
-
-export const UploadFile = base44.integrations.Core.UploadFile;
-
-export const GenerateImage = base44.integrations.Core.GenerateImage;
-
-export const ExtractDataFromUploadedFile = base44.integrations.Core.ExtractDataFromUploadedFile;
+// Export integrations from mock implementations
+export { Core, InvokeLLM, SendEmail, UploadFile, GenerateImage, ExtractDataFromUploadedFile };
 
 
 

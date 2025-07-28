@@ -94,18 +94,8 @@ export default function Awards() {
   const [dateLocale, setDateLocale] = useState(enUS);
 
   useEffect(() => {
-    const loadLocale = async () => {
-      try {
-        const localeId = navigator.language.split('-')[0];
-        if (localeId !== 'en') {
-          const localeModule = await import(`date-fns/locale/${localeId}`);
-          setDateLocale(localeModule.default);
-        }
-      } catch (e) {
-        console.warn("Could not load date-fns locale, falling back to en-US.", e);
-      }
-    };
-    loadLocale();
+    // For simplicity in standalone mode, just use en-US locale
+    setDateLocale(enUS);
   }, []);
 
   useEffect(() => {
