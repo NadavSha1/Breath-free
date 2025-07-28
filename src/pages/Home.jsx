@@ -10,14 +10,14 @@ import { User as UserIcon, Plus, PenSquare, ArrowRight } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { calculateSmokeStreaks, formatStreakTime } from "@/components/utils/dataCalculations";
 
-import TrendChart from "../components/dashboard/TrendChart";
-import MotivationalCard from "../components/dashboard/MotivationalCard";
-import LogCigaretteForm from "../components/dashboard/LogCigaretteForm";
-import useCoffeeSupport from "../components/support/useCoffeeSupport";
-import CoffeeSupportPopup from "../components/support/CoffeeSupportPopup";
-import AwardUnlockPopup from "../components/awards/AwardUnlockPopup";
-import useAwardNotifications from "../components/awards/useAwardNotifications";
-import { AWARDS_LIBRARY, calculateAwardData, checkAwardUnlock, getAwardProgress } from "../components/utils/awardLibrary";
+import TrendChart from "@/components/dashboard/TrendChart";
+import MotivationalCard from "@/components/dashboard/MotivationalCard";
+import LogCigaretteForm from "@/components/dashboard/LogCigaretteForm";
+import useCoffeeSupport from "@/components/support/useCoffeeSupport";
+import CoffeeSupportPopup from "@/components/support/CoffeeSupportPopup";
+import AwardUnlockPopup from "@/components/awards/AwardUnlockPopup";
+import useAwardNotifications from "@/components/awards/useAwardNotifications";
+import { AWARDS_LIBRARY, calculateAwardData, checkAwardUnlock, getAwardProgress } from "@/components/utils/awardLibrary";
 
 export default function Home() {
   const [stats, setStats] = useState({

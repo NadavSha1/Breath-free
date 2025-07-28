@@ -5,8 +5,8 @@ import { User } from "@/api/entities";
 import { createPageUrl } from "@/utils";
 import { Home, Trophy, Heart, BarChart3 } from "lucide-react";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
-import useCoffeeSupport from "./components/support/useCoffeeSupport";
-import CoffeeSupportPopup from "./components/support/CoffeeSupportPopup";
+import useCoffeeSupport from "@/components/support/useCoffeeSupport";
+import CoffeeSupportPopup from "@/components/support/CoffeeSupportPopup";
 
 const navigationItems = [
   { name: "Home", href: "Home", icon: Home },

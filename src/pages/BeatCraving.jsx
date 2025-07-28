@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Heart, Wind, Brain, Trophy, Music } from "lucide-react";
 
-import BreathingLinks from "../components/craving/BreathingLinks";
-import MeditationLinks from "../components/craving/MeditationLinks";
-import MotivationalQuotes from "../components/craving/MotivationalQuotes";
-import MusicStrategy from "../components/craving/MusicStrategy";
+import BreathingLinks from "@/components/craving/BreathingLinks";
+import MeditationLinks from "@/components/craving/MeditationLinks";
+import MotivationalQuotes from "@/components/craving/MotivationalQuotes";
+import MusicStrategy from "@/components/craving/MusicStrategy";
 
 const COPING_CATEGORIES = [
   {

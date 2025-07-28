@@ -7,7 +7,7 @@ import { BarChart3, TrendingUp, Sun, Flame, Brain, ChevronRight, DollarSign, Cal
 import { motion } from "framer-motion";
 import { calculateSmokeStreaks, formatStreakTime, calculateUnifiedStats } from "@/components/utils/dataCalculations";
 
-import StatsCard from "../components/stats/StatsCard";
+import StatsCard from "@/components/stats/StatsCard";
 
 export default function Stats() {
   const navigate = useNavigate();
