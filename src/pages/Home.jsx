@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { SmokingEntry, User, Achievement, GoalHistory } from "@/api/entities";
-import { format, startOfDay, endOfDay, differenceInDays, eachDayOfInterval, subDays } from "date-fns";
+import { format, startOfDay, endOfDay, eachDayOfInterval, subDays } from "date-fns";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { User as UserIcon, Plus, PenSquare, ArrowRight } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { calculateSmokeStreaks, formatStreakTime, calculateUnifiedStats } from "@/components/utils/dataCalculations";
+import { calculateSmokeStreaks, formatStreakTime } from "@/components/utils/dataCalculations";
 
 import TrendChart from "../components/dashboard/TrendChart";
 import MotivationalCard from "../components/dashboard/MotivationalCard";
@@ -50,43 +50,44 @@ export default function Home() {
     handleNeverAsk
   } = useCoffeeSupport();
 
-  useEffect(() => {
-    loadDashboardData();
-  }, [initialized]);
+  // Memoize color scheme calculation to prevent unnecessary re-renders
+  const colorScheme = useMemo(() => {
+    if (!stats.dailyLimit || stats.dailyLimit === 0) {
+      return { card: "from-blue-50 to-indigo-100 border-blue-200", text: "text-blue-800", heading: "text-blue-900", subtext: "text-blue-700" };
+    }
+    const ratio = stats.todayCount / stats.dailyLimit;
+    if (ratio > 1) {
+      return { card: "from-red-50 to-red-100 border-red-200", text: "text-red-800", heading: "text-red-900", subtext: "text-red-700" };
+    }
+    if (ratio >= 0.8) {
+      return { card: "from-yellow-50 to-yellow-100 border-yellow-200", text: "text-yellow-800", heading: "text-yellow-900", subtext: "text-yellow-700" };
+    }
+    return { card: "from-green-50 to-green-100 border-green-200", text: "text-green-800", heading: "text-green-900", subtext: "text-green-700" };
+  }, [stats.todayCount, stats.dailyLimit]);
 
-  // Real-time streak update effect
-  useEffect(() => {
-    if (!stats.journeyStart) return;
+  // Memoize greeting calculation
+  const greeting = useMemo(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
+  }, []);
 
-    const interval = setInterval(() => {
-      setStats(prev => {
-        if (!prev.journeyStart) return prev;
-        
-        const now = new Date();
-        let newCurrentStreak = 0;
+  // Memoize last smoked text calculation
+  const lastSmokedText = useMemo(() => {
+    if (!stats.lastSmoke) {
+      return "No cigarettes logged yet";
+    }
+    return `Last smoked: ${formatStreakTime(stats.currentStreak)} ago`;
+  }, [stats.lastSmoke, stats.currentStreak]);
 
-        if (prev.lastSmoke) {
-          const lastCigaretteTime = new Date(prev.lastSmoke);
-          newCurrentStreak = now.getTime() - lastCigaretteTime.getTime();
-        } else {
-          const journeyStartTime = new Date(prev.journeyStart);
-          newCurrentStreak = now.getTime() - journeyStartTime.getTime();
-        }
-
-        return {
-          ...prev,
-          currentStreak: newCurrentStreak > 0 ? newCurrentStreak : 0
-        };
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [stats.lastSmoke, stats.journeyStart]);
-
-  const loadDashboardData = async (isManualLog = false) => {
-    trackInteraction();
+  const loadDashboardData = useCallback(async () => {
+    if (!initialized) return; // Wait for award system to initialize
+    
     setLoading(true);
     setError(null);
+    trackInteraction();
+    
     try {
       const [allEntries, userData, existingAchievements, goalHistory] = await Promise.all([
         SmokingEntry.list('-timestamp'),
@@ -194,10 +195,7 @@ export default function Home() {
         
         // Reload achievements and check for new unlocks
         const updatedAchievements = await Achievement.list();
-        
-        if (initialized) {
-          checkForNewAwards(updatedAchievements);
-        }
+        checkForNewAwards(updatedAchievements);
       }
       
     } catch (err) {
@@ -210,74 +208,113 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  };
-  
-  const handleQuickLog = async () => {
+  }, [initialized, navigate, trackInteraction, checkForNewAwards]);
+
+  useEffect(() => {
+    loadDashboardData();
+  }, [loadDashboardData]);
+
+  // Optimized real-time streak update effect
+  useEffect(() => {
+    if (!stats.journeyStart) return;
+
+    const interval = setInterval(() => {
+      setStats(prev => {
+        if (!prev.journeyStart) return prev;
+        
+        const now = new Date();
+        let newCurrentStreak = 0;
+
+        if (prev.lastSmoke) {
+          const lastCigaretteTime = new Date(prev.lastSmoke);
+          newCurrentStreak = now.getTime() - lastCigaretteTime.getTime();
+        } else {
+          const journeyStartTime = new Date(prev.journeyStart);
+          newCurrentStreak = now.getTime() - journeyStartTime.getTime();
+        }
+
+        // Only update if there's a significant change (1 second)
+        if (Math.abs(newCurrentStreak - prev.currentStreak) < 1000) {
+          return prev;
+        }
+
+        return {
+          ...prev,
+          currentStreak: newCurrentStreak > 0 ? newCurrentStreak : 0
+        };
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [stats.lastSmoke, stats.journeyStart]);
+
+  const handleQuickLog = useCallback(async () => {
     trackInteraction();
-    await SmokingEntry.create({ timestamp: new Date().toISOString(), quick_log: true });
-    await loadDashboardData(true);
-  };
+    try {
+      await SmokingEntry.create({ timestamp: new Date().toISOString(), quick_log: true });
+      await loadDashboardData();
+    } catch (error) {
+      console.error('Error logging cigarette:', error);
+      setError('Failed to log cigarette. Please try again.');
+    }
+  }, [trackInteraction, loadDashboardData]);
   
-  const openLogForm = (mode) => {
+  const openLogForm = useCallback((mode) => {
     trackInteraction();
     setLogFormState({ isOpen: true, mode });
-  };
+  }, [trackInteraction]);
   
-  const closeLogForm = () => {
+  const closeLogForm = useCallback(() => {
     setLogFormState({ isOpen: false, mode: 'detailed' });
-  };
+  }, []);
 
-  const getColorScheme = () => {
-    if (!stats.dailyLimit || stats.dailyLimit === 0) {
-      return { card: "from-blue-50 to-indigo-100 border-blue-200", text: "text-blue-800", heading: "text-blue-900", subtext: "text-blue-700" };
-    }
-    const ratio = stats.todayCount / stats.dailyLimit;
-    if (ratio > 1) {
-      return { card: "from-red-50 to-red-100 border-red-200", text: "text-red-800", heading: "text-red-900", subtext: "text-red-700" };
-    }
-    if (ratio >= 0.8) {
-      return { card: "from-yellow-50 to-yellow-100 border-yellow-200", text: "text-yellow-800", heading: "text-yellow-900", subtext: "text-yellow-700" };
-    }
-    return { card: "from-green-50 to-green-100 border-green-200", text: "text-green-800", heading: "text-green-900", subtext: "text-green-700" };
-  };
-  const colorScheme = getColorScheme();
+  const handleAccountNavigation = useCallback(() => {
+    trackInteraction();
+    navigate(createPageUrl("Account"));
+  }, [trackInteraction, navigate]);
 
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 18) return "Good afternoon";
-    return "Good evening";
-  };
-
-  const getLastSmokedText = () => {
-    if (!stats.lastSmoke) {
-      return "No cigarettes logged yet";
-    }
-    return `Last smoked: ${formatStreakTime(stats.currentStreak)} ago`;
-  };
+  const handleStatsNavigation = useCallback(() => {
+    trackInteraction();
+    navigate(createPageUrl("Stats"));
+  }, [trackInteraction, navigate]);
 
   if (loading && !user) return <div className="p-8 text-center">Loading your journey...</div>;
 
   if (error) {
-    return <div className="p-8 text-center text-red-500">{error}</div>;
+    return (
+      <div className="p-8 text-center space-y-4">
+        <div className="text-red-500">{error}</div>
+        <Button onClick={loadDashboardData} variant="outline">
+          Try Again
+        </Button>
+      </div>
+    );
   }
 
   return (
     <div className="p-4 max-w-4xl mx-auto space-y-8">
-      <LogCigaretteForm isOpen={logFormState.isOpen} mode={logFormState.mode} onClose={closeLogForm} onSave={() => loadDashboardData(true)} />
+      <LogCigaretteForm 
+        isOpen={logFormState.isOpen} 
+        mode={logFormState.mode} 
+        onClose={closeLogForm} 
+        onSave={loadDashboardData} 
+      />
 
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex justify-between items-center">
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        className="flex justify-between items-center"
+      >
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">{getGreeting()}, {user?.full_name?.split(' ')[0]}</h1>
+          <h1 className="text-2xl font-bold text-slate-900">
+            {greeting}, {user?.full_name?.split(' ')[0]}
+          </h1>
           <p className="text-sm text-slate-600">{format(new Date(), "eeee, d LLL")}</p>
         </div>
         <Button 
           variant="ghost" 
           size="icon" 
-          onClick={() => {
-            trackInteraction();
-            navigate(createPageUrl("Account"));
-          }} 
+          onClick={handleAccountNavigation}
           className="rounded-full w-12 h-12 bg-slate-100"
           aria-label="Go to account settings"
         >
@@ -321,7 +358,7 @@ export default function Home() {
         {/* Last smoked info moved below the card */}
         <div className="mt-3 px-1">
           <p className="text-sm text-gray-600">
-            {getLastSmokedText()}
+            {lastSmokedText}
           </p>
         </div>
       </section>
@@ -332,10 +369,7 @@ export default function Home() {
           <Button 
             variant="outline"
             size="sm"
-            onClick={() => {
-              trackInteraction();
-              navigate(createPageUrl("Stats"));
-            }}
+            onClick={handleStatsNavigation}
             className="group"
           >
             Show More

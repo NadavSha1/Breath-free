@@ -1,4 +1,4 @@
-import { differenceInDays, startOfDay, format } from "date-fns";
+import { differenceInDays, format } from "date-fns";
 
 // Centralized calculation functions to ensure consistency across awards and stats
 export const calculateUnifiedStats = (entries, userData, journeyStart) => {
