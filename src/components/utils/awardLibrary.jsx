@@ -105,168 +105,100 @@ export const AWARDS_LIBRARY = [
 
   // 💰 Money Saved - Money Category
   {
-    id: "coffee_on_me",
-    name: "Coffee on Me",
-    description: "Enough saved for a coffee.",
-    category: "money",
-    badge_icon: "coffee",
-    badge_color: "yellow",
-    logic: (data) => data.moneySaved >= 5,
-    target_value: 5,
-    progress_key: "moneySaved"
-  },
-  {
-    id: "saved_tenner",
-    name: "Saved a Tenner",
-    description: "10 bucks saved — that's a coffee and a snack.",
+    id: "first_dollar_saved",
+    name: "First Dollar Saved",
+    description: "Your first dollar saved! Many more to come.",
     category: "money",
     badge_icon: "dollar-sign",
     badge_color: "yellow",
-    logic: (data) => data.moneySaved >= 10,
-    target_value: 10,
-    progress_key: "moneySaved"
-  },
-  {
-    id: "smokin_saver_100",
-    name: "Smokin' Saver: $100",
-    description: "That's $100 not lit on fire. Nice work.",
-    category: "money",
-    badge_icon: "dollar-sign",
-    badge_color: "yellow",
-    logic: (data) => data.moneySaved >= 100,
-    target_value: 100,
-    progress_key: "moneySaved"
-  },
-  {
-    id: "money_boss_500",
-    name: "Money Boss: $500",
-    description: "Half a grand saved. Still smoke-free.",
-    category: "money",
-    badge_icon: "piggy-bank",
-    badge_color: "gold",
-    logic: (data) => data.moneySaved >= 500,
-    target_value: 500,
-    progress_key: "moneySaved"
-  },
-
-  // 📉 Reduced Daily Smoking - Progress Category
-  {
-    id: "half_cut_hero",
-    name: "Half Cut Hero",
-    description: "You've cut your daily smoking by 50%. Respect.",
-    category: "progress",
-    badge_icon: "trending-down",
-    badge_color: "blue",
-    logic: (data) => data.daysSinceStart >= 7 && data.reductionPercentage >= 50,
-    target_value: 50,
-    progress_key: "reductionPercentage"
-  },
-  {
-    id: "deep_detox_75",
-    name: "Deep Detox: -75%",
-    description: "You've dropped your habit by 75%. Almost there.",
-    category: "progress",
-    badge_icon: "trending-down",
-    badge_color: "purple",
-    logic: (data) => data.daysSinceStart >= 7 && data.reductionPercentage >= 75,
-    target_value: 75,
-    progress_key: "reductionPercentage"
-  },
-
-  // 🔥 Streaks (Days Without Smoking) - Milestone Category
-  {
-    id: "one_day_wall",
-    name: "1-Day Wall",
-    description: "You've gone 24 hours without smoking. That's the first wall broken.",
-    category: "milestone",
-    badge_icon: "star",
-    badge_color: "green",
-    logic: (data) => data.currentStreakDays >= 1,
+    logic: (data) => data.moneySaved >= 1,
     target_value: 1,
-    progress_key: "currentStreakDays"
+    progress_key: "moneySaved"
   },
   {
-    id: "week_warrior",
-    name: "The Week Warrior",
-    description: "7 days clean. That's a full circle.",
-    category: "milestone",
-    badge_icon: "trophy",
-    badge_color: "blue",
-    logic: (data) => data.currentStreakDays >= 7,
-    target_value: 7,
-    progress_key: "currentStreakDays"
-  },
-  {
-    id: "unshakeable_30",
-    name: "Unshakeable: 30 Days",
-    description: "One full month smoke-free. That's transformation.",
-    category: "milestone",
-    badge_icon: "crown",
-    badge_color: "gold",
-    logic: (data) => data.currentStreakDays >= 30,
-    target_value: 30,
-    progress_key: "currentStreakDays"
+    id: "twenty_dollar_saver",
+    name: "$20 Saver",
+    description: "You've saved $20! That's a nice meal out.",
+    category: "money",
+    badge_icon: "banknote",
+    badge_color: "yellow",
+    logic: (data) => data.moneySaved >= 20,
+    target_value: 20,
+    progress_key: "moneySaved"
   },
 
-  // ✅ Logging Streaks - Logging & Consistency Categories
+  // 📊 Consistency - Logging Category
   {
-    id: "getting_started",
-    name: "Getting Started",
-    description: "You've logged your very first cigarette. The journey begins.",
+    id: "consistent_logger",
+    name: "Consistent Logger",
+    description: "3 days of consistent logging. Building good habits!",
     category: "logging",
-    badge_icon: "plus-circle",
-    badge_color: "green",
-    logic: (data) => data.totalLogs >= 1,
-    target_value: 1,
-    progress_key: "totalLogs"
-  },
-  {
-    id: "daily_logger_3",
-    name: "Daily Logger: 3 Days",
-    description: "You've logged a cigarette 3 days in a row.",
-    category: "consistency",
-    badge_icon: "calendar",
-    badge_color: "purple",
+    badge_icon: "edit",
+    badge_color: "gray",
     logic: (data) => data.loggingStreakDays >= 3,
     target_value: 3,
     progress_key: "loggingStreakDays"
   },
   {
-    id: "daily_logger_7",
-    name: "Daily Logger: 7 Days",
-    description: "7 days straight of tracking. That's how change begins.",
-    category: "consistency",
+    id: "week_logger",
+    name: "Week Logger",
+    description: "A full week of logging. You're committed!",
+    category: "logging",
     badge_icon: "calendar-check",
     badge_color: "purple",
     logic: (data) => data.loggingStreakDays >= 7,
     target_value: 7,
     progress_key: "loggingStreakDays"
-  },
-  {
-    id: "habit_tracker_pro_30",
-    name: "Habit Tracker Pro: 30 Days",
-    description: "30 days of logs — win or lose, you're showing up.",
-    category: "consistency",
-    badge_icon: "clipboard-check",
-    badge_color: "gold",
-    logic: (data) => data.loggingStreakDays >= 30,
-    target_value: 30,
-    progress_key: "loggingStreakDays"
   }
 ];
 
-// Helper function to get current progress for an award using unified calculations
-export const getAwardProgress = (award, data) => {
-  if (!award.progress_key || data[award.progress_key] === undefined) return 0;
+// Memoized calculation function
+let calculationCache = new Map();
+let cacheExpiry = 0;
+const CACHE_DURATION = 5000; // 5 seconds
+
+export const calculateAwardData = (entries, userData, journeyStart) => {
+  const now = Date.now();
+  const cacheKey = `${entries.length}-${userData.id}-${journeyStart}`;
   
-  const currentValue = data[award.progress_key];
-  return Math.min(currentValue, award.target_value);
+  // Check if we have valid cached data
+  if (now < cacheExpiry && calculationCache.has(cacheKey)) {
+    return calculationCache.get(cacheKey);
+  }
+  
+  // Calculate fresh data
+  const data = calculateUnifiedStats(entries, userData, journeyStart);
+  
+  // Update cache
+  calculationCache.clear(); // Clear old cache
+  calculationCache.set(cacheKey, data);
+  cacheExpiry = now + CACHE_DURATION;
+  
+  return data;
 };
 
-// Helper function to check if award should be unlocked using unified calculations
-export const checkAwardUnlock = (award, data) => {
-  return award.logic(data);
+export const getAwardProgress = (awardTemplate, awardData) => {
+  const progressKey = awardTemplate.progress_key;
+  return awardData[progressKey] || 0;
 };
 
-// Use the unified calculation system
-export const calculateAwardData = calculateUnifiedStats;
+export const checkAwardUnlock = (awardTemplate, awardData) => {
+  try {
+    return awardTemplate.logic(awardData);
+  } catch (error) {
+    console.error(`Error checking award unlock for ${awardTemplate.name}:`, error);
+    return false;
+  }
+};
+
+// Batch process awards for better performance
+export const processBatchAwards = (entries, userData, journeyStart) => {
+  const awardData = calculateAwardData(entries, userData, journeyStart);
+  
+  return AWARDS_LIBRARY.map(template => ({
+    template,
+    progress: getAwardProgress(template, awardData),
+    unlocked: checkAwardUnlock(template, awardData),
+    data: awardData
+  }));
+};

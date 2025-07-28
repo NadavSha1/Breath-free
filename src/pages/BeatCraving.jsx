@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -68,7 +68,11 @@ export default function BeatCraving() {
   if (selectedStrategy) {
     const StrategyComponent = STRATEGY_COMPONENTS[selectedStrategy];
     if (StrategyComponent) {
-      return <StrategyComponent onBack={handleBack} />;
+      return (
+        <div className="p-4 max-w-4xl mx-auto">
+          <StrategyComponent onBack={handleBack} />
+        </div>
+      );
     }
     // Fallback for an unknown strategy
     return (
@@ -92,7 +96,7 @@ export default function BeatCraving() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Beat This Craving</h1>
           <p className="text-gray-600 max-w-md mx-auto">
-            You're stronger than this urge. Choose a strategy to find your calm.
+            You&apos;re stronger than this urge. Choose a strategy to find your calm.
           </p>
         </div>
       </motion.div>
