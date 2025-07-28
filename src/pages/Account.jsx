@@ -138,6 +138,17 @@ export default function Account() {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await User.logout();
+      navigate(createPageUrl("Login"));
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Force redirect even if logout fails
+      navigate(createPageUrl("Login"));
+    }
+  };
+
   const handleDeleteAccount = async () => {
     setSaving(true);
     try {
@@ -172,6 +183,7 @@ export default function Account() {
       });
 
       await User.logout();
+      navigate(createPageUrl("Login"));
 
     } catch (error) {
       console.error("Error deleting account data:", error);
@@ -249,7 +261,7 @@ export default function Account() {
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
             <Card className="p-2">
-              <AccountRow icon={LogOut} title="Logout" onClick={() => User.logout()} />
+              <AccountRow icon={LogOut} title="Logout" onClick={handleLogout} />
               <Separator />
               <AccountRow icon={Trash2} title="Delete Account" onClick={() => setShowDeleteModal(true)} variant="danger" />
             </Card>

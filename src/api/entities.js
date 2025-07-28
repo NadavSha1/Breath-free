@@ -1,15 +1,6 @@
-import { base44 } from './base44Client';
+// Import mock implementations instead of Base44 SDK
+import { SmokingEntry, CravingEntry, Achievement, GoalHistory } from './mockEntities';
+import { User } from './mockAuth';
 
-
-export const SmokingEntry = base44.entities.SmokingEntry;
-
-export const CravingEntry = base44.entities.CravingEntry;
-
-export const Achievement = base44.entities.Achievement;
-
-export const GoalHistory = base44.entities.GoalHistory;
-
-
-
-// auth sdk:
-export const User = base44.auth;
+// Export entities from mock implementations
+export { SmokingEntry, CravingEntry, Achievement, GoalHistory, User };
